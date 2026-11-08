@@ -46,18 +46,7 @@ let
         postPatch = null;
       };
 
-      aiobotocore = super.aiobotocore.overridePythonAttrs (oldAttrs: {
-        version = "3.7.0";
-        src = oldAttrs.src.override {
-          tag = "3.7.0";
-          hash = "sha256-aitC2Qgpy1BRujlHaVt8AhNYPnyzJjLRGXkakubvQvg=";
-        };
-        nativeCheckInputs = oldAttrs.nativeCheckInputs ++ (with self; [ anthropic ]);
-        disabledTestPaths = oldAttrs.disabledTestPaths ++ [
-          "tests/botocore_tests/unit/test_endpoint_provider.py"
-          "tests/botocore_tests/unit/test_utils.py"
-        ];
-      });
+      aiobotocore = super.aiobotocore_3_7;
 
       anthropic = super.anthropic_2;
 
