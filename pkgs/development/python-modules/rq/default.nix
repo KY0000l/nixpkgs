@@ -23,14 +23,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "rq";
-  version = "3.0";
+  version = "2.12";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "rq";
     repo = "rq";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-xLl667lQ0IcyCEUmo2BvdvvOQNYpRIzq3IvILXe2x68=";
+    hash = "sha256-EGgOeATfuRONPxfbgBqrgK8tk4Ehg9El7bTGOVX4cLY=";
   };
 
   build-system = [ hatchling ];
@@ -57,14 +57,7 @@ buildPythonPackage (finalAttrs: {
 
   doCheck = true;
 
-  disabledTests = [
-    # timezone mismatch
-    "test_cron_string_fall_back"
-    "test_cron_string_spring_forward"
-    "test_get_next_enqueue_time_with_cron_string"
-    "test_schedule"
-  ]
-  ++
+  disabledTests =
     lib.optionals
       ((pythonAtLeast "3.14") && stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isAarch64)
       [
@@ -77,15 +70,15 @@ buildPythonPackage (finalAttrs: {
         "test_suspend_worker_execution"
         "test_work"
       ]
-  ++ lib.optionals stdenv.hostPlatform.isDarwin [
-    # PermissionError: [Errno 13] Permission denied: '/tmp/rq-tests.txt'
-    "test_deleted_jobs_arent_executed"
-    "test_suspend_worker_execution"
-  ]
-  ++ lib.optionals stdenv.hostPlatform.isLinux [
-    # no delay between reaping worker and checking; racy
-    "test_reap_workers"
-  ];
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
+      # PermissionError: [Errno 13] Permission denied: '/tmp/rq-tests.txt'
+      "test_deleted_jobs_arent_executed"
+      "test_suspend_worker_execution"
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isLinux [
+      # no delay between reaping worker and checking; racy
+      "test_reap_workers"
+    ];
 
   pythonImportsCheck = [ "rq" ];
 
